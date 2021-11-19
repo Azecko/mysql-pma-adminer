@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    image: mysql
+    container_name: db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: testdb
+      MYSQL_PASSWORD: testdb
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+
+  pma:
+    image: phpmyadmin
+    container_name: pma
+    restart: unless-stopped
+    ports:
+      - 8088:80
+    links:
+      - db
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - 8089:8080
+    command: php -S 0.0.0.0:8080 -t /var/www/html
+    links:
+      - db
